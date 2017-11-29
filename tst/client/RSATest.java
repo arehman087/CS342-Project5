@@ -9,6 +9,51 @@ import org.junit.Test;
 
 public class RSATest {
 	/**
+	 * Tests the (p, q) constructor of the RSA class throws when the arguments
+	 * are not valid.
+	 */
+	@Test
+	public void testCtorThrow() {
+		// Assert throws if too small (p * q < 128 ** BLOCK_SIZE)
+		try {
+			new RSA(13, 17);
+			assertTrue(false);
+		} catch (IllegalArgumentException e) {
+			assertTrue(true);
+		}
+		
+		// Assert throws if not prime
+		try {
+			new RSA(1000000, 2000000);
+			assertTrue(false);
+		} catch (IllegalArgumentException e) {
+			assertTrue(true);
+		}
+	}
+	
+	/**
+	 * Tests the (p, q) constructor of the RSA class for valid p and q values.
+	 */
+	@Test
+	public void testCtor() {
+		long p = 17033;
+		long q = 17029;
+		
+		RSA rsa = new RSA(p, q);
+		
+		// Assert N is valid
+		assertEquals(290054957, rsa.getN());
+		
+		// Assert E is valid
+		assertTrue(rsa.getE() < rsa.getN());
+		assertTrue(RSA.areRelativelyPrime(rsa.getE(), rsa.getN()));
+		
+		// Assert D is valid
+		long phi = (p - 1) * (q - 1);
+		assertEquals(1, (rsa.getE() * rsa.getD()) % phi);
+	}
+	
+	/**
 	 * Tests the isPrime function of the RSA class.
 	 */
 	@Test
