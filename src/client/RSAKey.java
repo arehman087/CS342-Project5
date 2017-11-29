@@ -5,7 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Class dealing with RSA encryption and decryption.
  */
-public class RSA {
+public class RSAKey {
 	protected static int BLOCKING_SIZE = 4;
 	
 	private long d;
@@ -20,48 +20,52 @@ public class RSA {
 	 * @param p The p prime.
 	 * @param q The q prime.
 	 */
-	public RSA(long p, long q) throws IllegalArgumentException {
+	public static RSAKey generateRSAKey(long p, long q)
+			throws IllegalArgumentException {
+		RSAKey key = new RSAKey(); 
+		
 		// Set p and q of the instance
-		this.p = p;
-		this.q = q;
+		key.p = p;
+		key.q = q;
 		
 		// Check p and q are both prime, throw exception if not prime
-		if (!isPrime(this.p)) {
+		if (!isPrime(key.p)) {
 			throw new IllegalArgumentException("p value is not prime");
 		}
-		if (!isPrime(this.q)) {
+		if (!isPrime(key.q)) {
 			throw new IllegalArgumentException("q value is not prime");
 		}
 		
 		// Check p * q > 128 ** BLOCKING_SIZE
-		this.n = this.p * this.q;
-		if (this.n <= Math.pow(128, BLOCKING_SIZE)) {
+		key.n = key.p * key.q;
+		if (key.n <= Math.pow(128, BLOCKING_SIZE)) {
 			throw new IllegalArgumentException("p * q <= 128 ** B_S");
 		}
 		
 		// Calculate phi
-		long phi = (this.p - 1) * (this.q - 1);
+		long phi = (key.p - 1) * (key.q - 1);
 		
 		// Find some value of e (less than n and relatively prime to phi)
-		this.e = n;
-		while (this.e >= n || !areRelativelyPrime(this.e, phi)) {
-			final long MAX = n - 1;
+		key.e = key.n;
+		while (key.e >= key.n || !areRelativelyPrime(key.e, phi)) {
+			final long MAX = key.n - 1;
 			final long MIN = 1;
 			
-			this.e = MIN +
-					ThreadLocalRandom.current().nextLong(MAX - MIN + 1);
+			key.e = MIN + ThreadLocalRandom.current().nextLong(MAX - MIN + 1);
 		}
 		
 		// Find the value of d such that (e * d) mod phi = 1
 		for (int k = 1; ; ++k) {
 			long numerator = 1 + k * phi;
-			long denominator = this.e;
+			long denominator = key.e;
 			
 			if (numerator % denominator == 0) {
-				this.d = numerator / denominator;
+				key.d = numerator / denominator;
 				break;
 			}
 		}
+		
+		return key;
 	}
 	
 	/**

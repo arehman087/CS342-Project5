@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-public class RSATest {
+public class RSAKeyTest {
 	/**
 	 * Tests the (p, q) constructor of the RSA class throws when the arguments
 	 * are not valid.
@@ -16,7 +16,7 @@ public class RSATest {
 	public void testCtorThrow() {
 		// Assert throws if too small (p * q < 128 ** BLOCK_SIZE)
 		try {
-			new RSA(13, 17);
+			RSAKey.generateRSAKey(13, 17);
 			assertTrue(false);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
@@ -24,7 +24,7 @@ public class RSATest {
 		
 		// Assert throws if not prime
 		try {
-			new RSA(1000000, 2000000);
+			RSAKey.generateRSAKey(1000000, 2000000);
 			assertTrue(false);
 		} catch (IllegalArgumentException e) {
 			assertTrue(true);
@@ -39,14 +39,14 @@ public class RSATest {
 		long p = 17033;
 		long q = 17029;
 		
-		RSA rsa = new RSA(p, q);
+		RSAKey rsa = RSAKey.generateRSAKey(p, q);
 		
 		// Assert N is valid
 		assertEquals(290054957, rsa.getN());
 		
 		// Assert E is valid
 		assertTrue(rsa.getE() < rsa.getN());
-		assertTrue(RSA.areRelativelyPrime(rsa.getE(), rsa.getN()));
+		assertTrue(RSAKey.areRelativelyPrime(rsa.getE(), rsa.getN()));
 		
 		// Assert D is valid
 		long phi = (p - 1) * (q - 1);
@@ -71,9 +71,9 @@ public class RSATest {
 		// considered primes, 
 		for (long i = 1; i <= 50; ++i) {
 			if (primesList.contains(i)) {
-				assertTrue(RSA.isPrime(i));
+				assertTrue(RSAKey.isPrime(i));
 			} else {
-				assertFalse(RSA.isPrime(i));
+				assertFalse(RSAKey.isPrime(i));
 			}
 		}
 	}
@@ -83,12 +83,12 @@ public class RSATest {
 	 */
 	@Test
 	public void testAreRelativelyPrime() {
-		assertTrue(RSA.areRelativelyPrime(2, 3));
-		assertTrue(RSA.areRelativelyPrime(2, 11));
-		assertFalse(RSA.areRelativelyPrime(32, 44));
-		assertFalse(RSA.areRelativelyPrime(54, 24));
-		assertFalse(RSA.areRelativelyPrime(12, 36));
-		assertFalse(RSA.areRelativelyPrime(32, 64));
+		assertTrue(RSAKey.areRelativelyPrime(2, 3));
+		assertTrue(RSAKey.areRelativelyPrime(2, 11));
+		assertFalse(RSAKey.areRelativelyPrime(32, 44));
+		assertFalse(RSAKey.areRelativelyPrime(54, 24));
+		assertFalse(RSAKey.areRelativelyPrime(12, 36));
+		assertFalse(RSAKey.areRelativelyPrime(32, 64));
 	}
 	
 	/**
@@ -97,11 +97,11 @@ public class RSATest {
 	@Test
 	public void testGCD() {
 		// Random test cases
-		assertEquals(1, RSA.gcd(2, 3));
-		assertEquals(1, RSA.gcd(2, 11));
-		assertEquals(4, RSA.gcd(32, 44));
-		assertEquals(6, RSA.gcd(54, 24));
-		assertEquals(12, RSA.gcd(12, 36));
-		assertEquals(32, RSA.gcd(32, 64));
+		assertEquals(1, RSAKey.gcd(2, 3));
+		assertEquals(1, RSAKey.gcd(2, 11));
+		assertEquals(4, RSAKey.gcd(32, 44));
+		assertEquals(6, RSAKey.gcd(54, 24));
+		assertEquals(12, RSAKey.gcd(12, 36));
+		assertEquals(32, RSAKey.gcd(32, 64));
 	}
 }
