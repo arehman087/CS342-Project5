@@ -1,12 +1,13 @@
 package client;
 
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Class dealing with RSA encryption and decryption.
  */
 public class RSAKey {
-	protected static int BLOCKING_SIZE = 4;
+	protected static int BLOCKING_SIZE = 1;
 	
 	private long d;
 	private long e;
@@ -14,6 +15,18 @@ public class RSAKey {
 	
 	private long p;
 	private long q;
+	
+	/**
+	 * Generates a RSA Key with all negative values.
+	 */
+	private RSAKey() {
+		this.d = -1;
+		this.e = -1;
+		this.n = -1;
+		
+		this.p = -1;
+		this.q = -1;
+	}
 	
 	/**
 	 * Initializes an RSA instance with the specified p and q values.
@@ -46,12 +59,14 @@ public class RSAKey {
 		long phi = (key.p - 1) * (key.q - 1);
 		
 		// Find some value of e (less than n and relatively prime to phi)
-		key.e = key.n;
-		while (key.e >= key.n || !areRelativelyPrime(key.e, phi)) {
+		for (int i = 2; i < key.n; ++i) {
 			final long MAX = key.n - 1;
 			final long MIN = 1;
 			
-			key.e = MIN + ThreadLocalRandom.current().nextLong(MAX - MIN + 1);
+			key.e = i;
+			if (areRelativelyPrime(key.e, phi)) {
+				break;
+			}
 		}
 		
 		// Find the value of d such that (e * d) mod phi = 1
@@ -66,6 +81,63 @@ public class RSAKey {
 		}
 		
 		return key;
+	}
+	
+	/**
+	 * Decrypts the specified message, using the given public key and returns
+	 * the message.
+	 * @param msg The message blocks.
+	 * @param d The public key d value.
+	 * @param n The public key n value.
+	 * @return The string representation of the message.
+	 */
+	public static String decrypt(ArrayList<Long> msg, long d, long n) {
+		StringBuilder sB = new StringBuilder();
+		
+		for (long block : msg) {
+			char c = (char)(RSAKey.modExp(block, d, n));
+			sB.append(c);
+		}
+		
+		return sB.toString();
+	}
+	
+	/**
+	 * Encrypts the specified message, using the given private key and returns
+	 * the blocks of the encrypted message.
+	 * @param msg The message to be encrypted.
+	 * @param e The private key d value.
+	 * @param n The private key n value.
+	 * @return The list of long integers, where each integer represents a
+	 *         block of the message.
+	 */
+	public static ArrayList<Long> encrypt(String msg, long e, long n) {
+		ArrayList<Long> list = new ArrayList<Long>();
+		
+		// Go through each block of the message string 
+		for (int i = 0; i < msg.length(); i += BLOCKING_SIZE) {			
+			long eB = 0;
+			
+			// Get the sub string of the current block
+			int endIndex = Math.min(i + BLOCKING_SIZE, msg.length());
+			String msgSubStr = msg.substring(i, endIndex);
+			
+			// Go through each character in the block, generate the
+			// encrypted character for it, and add to the encrypted
+			// block.
+			for (int j = 0; j < msgSubStr.length(); ++j) {
+				char c = msgSubStr.charAt(j); 
+				long eC = RSAKey.modExp(c, e, n);
+				eB += eC;
+				
+				//System.out.println(eC);
+			}
+			
+			// Add the block to the list
+			list.add(eB);
+		}
+		
+		return list;
 	}
 	
 	/**
@@ -141,5 +213,28 @@ public class RSAKey {
 		}
 		
 		return a;
+	}
+	
+	/**
+	 * Computes (x ** y) mod m using modular exponentiation.
+	 * @param x The base value.
+	 * @param y The power value.
+	 * @param m The mod value.
+	 * @return The result of the modular exponentiation.
+	 */
+	protected static long modExp(long x, long y, long m) {
+		long ret = 1;
+		x = x % m;
+		
+		while (y > 0) {
+			if (y % 2 != 0) {
+				ret = (ret * x) % m; 
+			}
+			
+			y >>= 1;
+			x = (x * x) % m;
+		}
+		
+		return ret;
 	}
 }

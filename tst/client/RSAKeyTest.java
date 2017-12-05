@@ -2,6 +2,7 @@ package client;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,11 +10,11 @@ import org.junit.Test;
 
 public class RSAKeyTest {
 	/**
-	 * Tests the (p, q) constructor of the RSA class throws when the arguments
+	 * Tests the generateRSAKey of the RSA class throws when the arguments
 	 * are not valid.
 	 */
 	@Test
-	public void testCtorThrow() {
+	public void testGenerateRSAKeyThrow() {
 		// Assert throws if too small (p * q < 128 ** BLOCK_SIZE)
 		try {
 			RSAKey.generateRSAKey(13, 17);
@@ -32,10 +33,10 @@ public class RSAKeyTest {
 	}
 	
 	/**
-	 * Tests the (p, q) constructor of the RSA class for valid p and q values.
+	 * Tests the generateRSAKey of the RSA class for valid p and q values.
 	 */
 	@Test
-	public void testCtor() {
+	public void testGenerateRSAKey() {
 		long p = 17033;
 		long q = 17029;
 		
@@ -51,6 +52,24 @@ public class RSAKeyTest {
 		// Assert D is valid
 		long phi = (p - 1) * (q - 1);
 		assertEquals(1, (rsa.getE() * rsa.getD()) % phi);
+	}
+	
+	/**
+	 * Tests the encrypt/decrypt methods of the RSA Key class.
+	 */
+	@Test
+	public void testEncryptDecrypt() {
+		long p = 17033;
+		long q = 17029;
+		RSAKey rsa = RSAKey.generateRSAKey(p, q);
+		
+		String original = "Meet me outside SCE at 10pm.";
+		ArrayList<Long> encrypted = RSAKey.encrypt(
+				original, rsa.getE(), rsa.getN());
+		String decrypted = RSAKey.decrypt(
+				encrypted, rsa.getD(), rsa.getN());
+		
+		assertEquals(original, decrypted);
 	}
 	
 	/**
@@ -103,5 +122,15 @@ public class RSAKeyTest {
 		assertEquals(6, RSAKey.gcd(54, 24));
 		assertEquals(12, RSAKey.gcd(12, 36));
 		assertEquals(32, RSAKey.gcd(32, 64));
+	}
+	
+	/**
+	 * Tests the modExp function of the RSA class.
+	 */
+	@Test
+	public void testModExp() {
+		// Random test cases
+		assertEquals(368, RSAKey.modExp(512, 2015, 1000));
+		assertEquals(868, RSAKey.modExp(20312, 2123015, 10100));
 	}
 }
