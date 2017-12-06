@@ -24,7 +24,7 @@ public class Server {
 		}
 		
 		this.serverListenThread = new Thread(new ServerListenThread(this));
-		this.serverListenThread.run();
+		this.serverListenThread.start();
 	}
 	
 	/**
@@ -43,6 +43,7 @@ public class Server {
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					sock.getInputStream()));
+			PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
 			
 			String name = in.readLine();
 			int kD = Integer.valueOf(in.readLine());
@@ -50,8 +51,12 @@ public class Server {
 			
 			Client client = new Client(sock, name, kD, kN, NEXT_ID++);
 			this.clients.put(client.getID(), client);
-
-			System.err.println("Received New Connection: " + client);
+			
+			Thread connThread = new Thread(new ClientConnectionThread(this, client));
+			connThread.start();
+			out.println("OK");
+			
+			System.err.println("% Received New Connection: " + client);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -23,9 +23,6 @@ public class ServerListenThread implements Runnable {
 		while (true) {
 			try {
 				Socket client = this.server.getSocket().accept();
-				System.err.println("% New Connection: " + 
-						client.getInetAddress());
-				
 				this.server.addConnection(client);
 			} catch (IOException e) {
 				e.printStackTrace();
