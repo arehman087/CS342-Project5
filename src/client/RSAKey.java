@@ -1,5 +1,6 @@
 package client;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -7,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Class dealing with RSA encryption and decryption.
  */
 public class RSAKey {
-	protected static int BLOCKING_SIZE = 1;
+	protected static int BLOCKING_SIZE = 4;
 	
 	private long d;
 	private long e;
@@ -60,11 +61,8 @@ public class RSAKey {
 		
 		// Find some value of e (less than n and relatively prime to phi)
 		for (int i = 2; i < key.n; ++i) {
-			final long MAX = key.n - 1;
-			final long MIN = 1;
-			
-			key.e = i;
-			if (areRelativelyPrime(key.e, phi)) {
+			if (areRelativelyPrime(i, phi)) {
+				key.e = i;
 				break;
 			}
 		}
@@ -91,12 +89,34 @@ public class RSAKey {
 	 * @param n The public key n value.
 	 * @return The string representation of the message.
 	 */
-	public static String decrypt(ArrayList<Long> msg, long d, long n) {
+	public static String decrypt(ArrayList<BigInteger> msg, long d, long n) {
 		StringBuilder sB = new StringBuilder();
+		int nLength = 1 + (int)Math.log10(n);
 		
-		for (long block : msg) {
-			char c = (char)(RSAKey.modExp(block, d, n));
-			sB.append(c);
+		for (BigInteger block : msg) {
+			StringBuilder sBBlock = new StringBuilder();
+			
+			String blockStr = block.toString();
+			
+			int index = blockStr.length() - nLength;
+			int count = 0;
+			
+			while (count < 4) {
+				String cStr = blockStr.substring(Math.max(0, index),
+						index + nLength);
+				long c = Long.valueOf(cStr);
+				
+				char dC = (char)(RSAKey.modExp(c, d, n));
+				if (dC != 0) {
+					sBBlock.append(dC);
+				}
+				
+				index -= nLength;
+				count++;
+			}
+			
+			sBBlock.reverse();
+			sB.append(sBBlock.toString());
 		}
 		
 		return sB.toString();
@@ -111,12 +131,14 @@ public class RSAKey {
 	 * @return The list of long integers, where each integer represents a
 	 *         block of the message.
 	 */
-	public static ArrayList<Long> encrypt(String msg, long e, long n) {
-		ArrayList<Long> list = new ArrayList<Long>();
+	public static ArrayList<BigInteger> encrypt(String msg, long e, long n) {
+		int nLength = 1 + (int)Math.log10(n);
+		
+		ArrayList<BigInteger> list = new ArrayList<BigInteger>();
 		
 		// Go through each block of the message string 
 		for (int i = 0; i < msg.length(); i += BLOCKING_SIZE) {			
-			long eB = 0;
+			BigInteger eB = new BigInteger("0");
 			
 			// Get the sub string of the current block
 			int endIndex = Math.min(i + BLOCKING_SIZE, msg.length());
@@ -128,9 +150,14 @@ public class RSAKey {
 			for (int j = 0; j < msgSubStr.length(); ++j) {
 				char c = msgSubStr.charAt(j); 
 				long eC = RSAKey.modExp(c, e, n);
-				eB += eC;
 				
-				//System.out.println(eC);
+				eB = eB.multiply(new BigInteger("10").pow(nLength));
+				eB = eB.add(new BigInteger(String.valueOf(eC)));
+			}
+			
+			// If this block is not multiple of four add padding
+			for (int j = msgSubStr.length(); j < BLOCKING_SIZE; ++j) {
+				eB = eB.multiply(new BigInteger("10").pow(nLength));
 			}
 			
 			// Add the block to the list

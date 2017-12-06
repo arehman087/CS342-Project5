@@ -2,6 +2,7 @@ package client;
 
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -63,8 +64,8 @@ public class RSAKeyTest {
 		long q = 17029;
 		RSAKey rsa = RSAKey.generateRSAKey(p, q);
 		
-		String original = "Meet me outside SCE at 10pm.";
-		ArrayList<Long> encrypted = RSAKey.encrypt(
+		String original = "Meet me outside SCE at 10pm...";
+		ArrayList<BigInteger> encrypted = RSAKey.encrypt(
 				original, rsa.getE(), rsa.getN());
 		String decrypted = RSAKey.decrypt(
 				encrypted, rsa.getD(), rsa.getN());
