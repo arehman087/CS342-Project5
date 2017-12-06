@@ -1,7 +1,13 @@
 package client;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -9,6 +15,9 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class RSAKey {
 	protected static int BLOCKING_SIZE = 4;
+	protected static File PRIMES_FILE = new File("res/primes");
+	protected static ArrayList<Integer> PRIMES = 
+			RSAKey.getRandomPrimes(PRIMES_FILE);
 	
 	private long d;
 	private long e;
@@ -30,9 +39,23 @@ public class RSAKey {
 	}
 	
 	/**
+	 * Generates a random RSAKey using the primes file.
+	 * @return The RSA key.
+	 */
+	public static RSAKey generateRSAKey() {
+		Random r = new Random();
+		
+		long p = RSAKey.PRIMES.get(r.nextInt(PRIMES.size()));
+		long q = RSAKey.PRIMES.get(r.nextInt(PRIMES.size()));
+		
+		return generateRSAKey(p, q);
+	}
+	
+	/**
 	 * Initializes an RSA instance with the specified p and q values.
 	 * @param p The p prime.
 	 * @param q The q prime.
+	 * @return The RSA key.
 	 */
 	public static RSAKey generateRSAKey(long p, long q)
 			throws IllegalArgumentException {
@@ -263,5 +286,32 @@ public class RSAKey {
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * Returns a list of all of the primes in the specified file.
+	 * @param f The file.
+	 * @return The list of integers from the file.
+	 */
+	protected static ArrayList<Integer> getRandomPrimes(File f) {
+		ArrayList<Integer> primes = new ArrayList<Integer>();
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(f));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			String line = reader.readLine();
+			while (line != null) {
+				primes.add(Integer.valueOf(line));
+				line = reader.readLine();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return primes;
 	}
 }
