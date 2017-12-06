@@ -101,7 +101,7 @@ public class RSAKey {
 			int index = blockStr.length() - nLength;
 			int count = 0;
 			
-			while (count < 4) {
+			while (count < BLOCKING_SIZE) {
 				String cStr = blockStr.substring(Math.max(0, index),
 						index + nLength);
 				long c = Long.valueOf(cStr);
