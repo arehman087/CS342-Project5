@@ -14,6 +14,9 @@ public class Server {
 	
 	private HashMap <Integer, Client> clients;
 	
+	/**
+	 * Instantiates the server.
+	 */
 	public Server() {
 		clients = new HashMap<Integer, Client>();
 		
@@ -52,7 +55,8 @@ public class Server {
 			Client client = new Client(sock, name, kD, kN, NEXT_ID++);
 			this.clients.put(client.getID(), client);
 			
-			Thread connThread = new Thread(new ClientConnectionThread(this, client));
+			Thread connThread = new Thread(
+					new ClientConnectionThread(this, client));
 			connThread.start();
 			out.println("OK");
 			
@@ -60,6 +64,26 @@ public class Server {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * Removes the specified client from the server.
+	 * @param client The client.
+	 */
+	public void removeConnection(Client client) {
+		this.clients.remove(client.getID());
+		System.err.println("% Lost Connection: " + client);
+	}
+	
+	/**
+	 * Processes the specified message.
+	 * @param client The client who sent the message.
+	 * @param recv The designated recipie`nt of the message.
+	 * @param msg The message to be forwarded to the recipient.
+	 */
+	public void processMessage(Client client, String recv, String msg) {
+		System.err.println("% Received message: \""  + msg + "\" from " +
+				client.getName() + " for " + recv);
 	}
 	
 	public static void main(String[] args){

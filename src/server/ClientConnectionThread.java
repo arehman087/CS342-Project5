@@ -36,18 +36,14 @@ public class ClientConnectionThread implements Runnable {
 		while (true) {
 			try {
 				if (in.ready()) {
-					String recipient = in.readLine();
-					String message = in.readLine();
+					String recv = in.readLine();
+					String msg = in.readLine();
 					
-					if (recipient == null || message == null) {
-						System.err.println("% Client " + 
-								this.client.getName() + " disconnected");
+					if (Integer.valueOf(recv) == -1) {
+						this.server.removeConnection(this.client);
 						return;
 					} else {
-						System.err.println("% Client " +
-								this.client.getName() + " sent message " +
-								"\"" + message + "\" to " + " client " +
-								recipient);
+						this.server.processMessage(this.client, recv, msg);
 					}
 				}
 			} catch (IOException e) {
