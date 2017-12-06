@@ -6,19 +6,18 @@ import java.io.*;
 
 public class Server { 
 	private static final int PORT = 10002;
-	private static int NEXT_ID = 0;
 	
 	private ServerSocket server;
 	
 	private Thread serverListenThread;
 	
-	private HashMap <Integer, Client> clients;
+	private HashMap <String, Client> clients;
 	
 	/**
 	 * Instantiates the server.
 	 */
 	public Server() {
-		clients = new HashMap<Integer, Client>();
+		clients = new HashMap<String, Client>();
 		
 		try {
 			this.server = new ServerSocket(PORT);
@@ -51,9 +50,9 @@ public class Server {
 			String name = in.readLine();
 			int kD = Integer.valueOf(in.readLine());
 			int kN = Integer.valueOf(in.readLine());
-			
-			Client client = new Client(sock, name, kD, kN, NEXT_ID++);
-			this.clients.put(client.getID(), client);
+						
+			Client client = new Client(sock, name, kD, kN);
+			this.clients.put(client.getSocket().toString(), client);
 			
 			Thread connThread = new Thread(
 					new ClientConnectionThread(this, client));
@@ -71,7 +70,7 @@ public class Server {
 	 * @param client The client.
 	 */
 	public void removeConnection(Client client) {
-		this.clients.remove(client.getID());
+		this.clients.remove(client.getSocket().toString());
 		System.err.println("% Lost Connection: " + client);
 	}
 	

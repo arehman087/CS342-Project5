@@ -5,34 +5,31 @@ import java.net.Socket;
 public class Client {
 	private Socket socket;
 	private String name;
-	private int id;
-	
-	private long keyD;
+
+	private long keyE;
 	private long keyN;
 	
 	/**
 	 * Creates new client.
 	 * @param sock The socket.
 	 * @param name The name.
-	 * @param kD The public key D value.
+	 * @param kD The public key E value.
 	 * @param kN The public key N value.
 	 * @param id The ID of the client.
 	 */
-	public Client(Socket sock, String name, long kD, long kN, int id) {
+	public Client(Socket sock, String name, long kE, long kN) {
 		this.socket = sock;
 		this.name = name;
 		
-		this.keyD = kD;
+		this.keyE = kE;
 		this.keyN = kN;
-		
-		this.id = id;
 	}
 	
 	/**
-	 * @return The public key D value.
+	 * @return The public key E value.
 	 */
-	public long getKeyD() {
-		return this.keyD;
+	public long getKeyE() {
+		return this.keyE;
 	}
 	
 	/**
@@ -57,20 +54,13 @@ public class Client {
 	}
 	
 	/**
-	 * @return The ID.
-	 */
-	public int getID() {
-		return this.id;
-	}
-	
-	/**
 	 * Returns a string representation of the Client.
 	 */
 	public String toString() {
 		StringBuilder sB = new StringBuilder();
 		
 		sB.append("Name: " + this.name);
-		sB.append("; Key D: " + this.keyD);
+		sB.append("; Key E: " + this.keyE);
 		sB.append("; Key N: " + this.keyN);
 		
 		return sB.toString();
