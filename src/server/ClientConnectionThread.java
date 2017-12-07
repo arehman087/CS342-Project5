@@ -37,12 +37,12 @@ public class ClientConnectionThread implements Runnable {
 			try {
 				if (in.ready()) {
 					String recv = in.readLine();
-					String msg = in.readLine();
 					
 					if (Integer.valueOf(recv) == -1) {
 						this.server.removeConnection(this.client);
 						return;
 					} else {
+						String msg = in.readLine();
 						this.server.processMessage(this.client, recv, msg);
 					}
 				}

@@ -2,10 +2,15 @@ package server;
 
 import java.net.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.io.*; 
 
 public class Server { 
 	private static final int PORT = 10002;
+	
+	private static final int SEND_ON_EXIT = -1;
+	private static final int SEND_ON_CLIENT_CONN = 1;
+	private static final int SEND_ON_CLIENT_DISC = 2;
 	
 	private ServerSocket server;
 	
@@ -48,10 +53,22 @@ public class Server {
 			PrintWriter out = new PrintWriter(sock.getOutputStream(), true);
 			
 			String name = in.readLine();
-			int kD = Integer.valueOf(in.readLine());
+			int kE = Integer.valueOf(in.readLine());
 			int kN = Integer.valueOf(in.readLine());
+			
+			// Notify all connected clients of the new connection
+			for (Client c : this.clients.values()) {
+				PrintWriter outC = new PrintWriter(
+						c.getSocket().getOutputStream(), true);
+				
+				outC.println(SEND_ON_CLIENT_CONN);
+				outC.println(sock.toString());
+				outC.println(c.getName());
+				outC.println(c.getKeyE());
+				outC.println(c.getKeyN());
+			}
 						
-			Client client = new Client(sock, name, kD, kN);
+			Client client = new Client(sock, name, kE, kN);
 			this.clients.put(client.getSocket().toString(), client);
 			
 			Thread connThread = new Thread(
@@ -71,6 +88,20 @@ public class Server {
 	 */
 	public void removeConnection(Client client) {
 		this.clients.remove(client.getSocket().toString());
+		
+		// Notify all connected clients of the disconnection
+		for (Client c : this.clients.values()) {
+			try {
+				PrintWriter outC = new PrintWriter(
+						c.getSocket().getOutputStream(), true);
+				
+				outC.println(SEND_ON_CLIENT_DISC);
+				outC.println(client.getSocket().toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		System.err.println("% Lost Connection: " + client);
 	}
 	
