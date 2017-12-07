@@ -1,6 +1,6 @@
+package client;
 
 public class ClientInfo {
-
 	private String clientID;
 	private String clientName;
 	private String clientKeyE;
@@ -41,7 +41,7 @@ public class ClientInfo {
 	 * @return - the clients key e
 	 */
 	public long getKeyE(){
-		return Long.valueOf(this.getKeyE());
+		return Long.valueOf(this.clientKeyE);
 	}
 	
 	/**
@@ -49,6 +49,6 @@ public class ClientInfo {
 	 * @return - the clients key e
 	 */
 	public long getKeyN(){
-		return Long.valueOf(this.getKeyN());
+		return Long.valueOf(this.clientKeyN);
 	}
 }
