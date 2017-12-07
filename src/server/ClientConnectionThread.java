@@ -38,7 +38,7 @@ public class ClientConnectionThread implements Runnable {
 				if (in.ready()) {
 					String recv = in.readLine();
 					
-					if (Integer.valueOf(recv) == -1) {
+					if (recv.contains("DISCONNECT")) {
 						this.server.removeConnection(this.client);
 						return;
 					} else {

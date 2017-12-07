@@ -11,6 +11,7 @@ public class Server {
 	private static final int SEND_ON_EXIT = -1;
 	private static final int SEND_ON_CLIENT_CONN = 1;
 	private static final int SEND_ON_CLIENT_DISC = 2;
+	private static final int SEND_ON_CLIENT_MSG = 3;
 	
 	private ServerSocket server;
 	
@@ -76,7 +77,7 @@ public class Server {
 				out.println(c.getKeyE());
 				out.println(c.getKeyN());
 			}
-						
+							
 			Client client = new Client(sock, name, kE, kN);
 			this.clients.put(client.getSocket().toString(), client);
 			
@@ -117,12 +118,24 @@ public class Server {
 	/**
 	 * Processes the specified message.
 	 * @param client The client who sent the message.
-	 * @param recv The designated recipie`nt of the message.
+	 * @param recv The designated recipient of the message.
 	 * @param msg The message to be forwarded to the recipient.
 	 */
 	public void processMessage(Client client, String recv, String msg) {
 		System.err.println("% Received message: \""  + msg + "\" from " +
 				client.getName() + " for " + recv);
+		
+		Client recvClient = this.clients.get(recv);
+		try {
+			PrintWriter recvClientOut = new PrintWriter(
+					recvClient.getSocket().getOutputStream(), true);
+			
+			recvClientOut.println(SEND_ON_CLIENT_MSG);
+			recvClientOut.println(client.getSocket());
+			recvClientOut.println(msg);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args){

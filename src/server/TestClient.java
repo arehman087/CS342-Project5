@@ -5,6 +5,7 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 
 class TestClientListenThread implements Runnable {
 	public TestClient client;
@@ -42,6 +43,13 @@ class TestClientListenThread implements Runnable {
 								"ID: " + clientID + "; Name:" + clientName + 
 								"; Key E: " + clientKeyE +
 								"; Key N: " + clientKeyN);
+						
+						ConnectedClient cC = new ConnectedClient();
+						cC.id = clientID;
+						cC.name = clientName;
+						cC.keyE = Integer.valueOf(clientKeyE);
+						cC.keyN = Integer.valueOf(clientKeyN);
+						this.client.connectClients.add(cC);
 					} 
 					// Client disconnect
 					else if (Integer.valueOf(msgType) == 2) {
@@ -66,6 +74,13 @@ class TestClientListenThread implements Runnable {
 	}
 }
 
+class ConnectedClient {
+	public String id;
+	public String name;
+	public int keyE;
+	public int keyN;
+}
+
 public class TestClient {
 	public Socket socket;
 	
@@ -73,6 +88,8 @@ public class TestClient {
 	public BufferedReader in;
 	
 	boolean doRun;
+	
+	ArrayList<ConnectedClient> connectClients = new ArrayList<ConnectedClient>();
 	
 	public TestClient(){
 		this.doRun = false;
@@ -113,6 +130,13 @@ public class TestClient {
 						"ID: " + clientID + "; Name:" + clientName + 
 						"; Key E: " + clientKeyE +
 						"; Key N: " + clientKeyN);
+				
+				ConnectedClient cC = new ConnectedClient();
+				cC.id = clientID;
+				cC.name = clientName;
+				cC.keyE = Integer.valueOf(clientKeyE);
+				cC.keyN = Integer.valueOf(clientKeyN);
+				client.connectClients.add(cC);
     		}
     	}
     	
@@ -126,12 +150,28 @@ public class TestClient {
     		t.start();
     	}
     	
-    	System.in.read();
+    	// Wait for new messages to be inputed by user
+    	Scanner sC = new Scanner(System.in);
+    	while (true) {
+    		
+    		if (sC.hasNextLine()) {
+	    		String recipient = sC.nextLine();
+	    		if (recipient.equals("EXIT")) {
+	    			break;
+	    		}
+	    		String message = sC.nextLine();
+    		
+	    		client.out.println(client.connectClients.get(Integer.valueOf(recipient)).id);
+	    		client.out.println(message);
+    		}
+    		
+    	}
+    	sC.close();
     	
     	{ // Close sockets
     		client.doRun = false;
     		t.join();
-    		client.out.println("-1");
+    		client.out.println("DISCONNECT");
     		
     		client.out.close();
 			client.in.close();
