@@ -99,6 +99,23 @@ public class TestClient {
     		client.out.println(keyN);
     	}
     	
+    	{ // Receive all of the connection information
+    		int numConnections = Integer.valueOf(client.in.readLine());
+    		
+    		System.out.println("% Initial Number of Connections: " + numConnections);
+    		for (int i = 0; i < numConnections; ++i) {
+				String clientID = client.in.readLine();
+				String clientName = client.in.readLine();
+				String clientKeyE = client.in.readLine();
+				String clientKeyN = client.in.readLine();
+				
+				System.err.println("% Initial Client Connected: " +
+						"ID: " + clientID + "; Name:" + clientName + 
+						"; Key E: " + clientKeyE +
+						"; Key N: " + clientKeyN);
+    		}
+    	}
+    	
     	{ // Wait for OK from Server
     		client.in.readLine();
     	}
