@@ -19,18 +19,16 @@ public class Server {
 	
 	private HashMap <String, Client> clients;
 	
+	private boolean isRunning;
 	/**
 	 * Instantiates the server.
 	 */
-	public Server() {
+	public Server(int port) throws IOException {
 		clients = new HashMap<String, Client>();
+		this.server = new ServerSocket(port);
 		
-		try {
-			this.server = new ServerSocket(PORT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
+		this.isRunning = true;
 		this.serverListenThread = new Thread(new ServerListenThread(this));
 		this.serverListenThread.start();
 	}
@@ -41,6 +39,14 @@ public class Server {
 	 */
 	public ServerSocket getSocket() {
 		return this.server;
+	}
+	
+	public void setIsRunning(boolean a){
+		this.isRunning = a;
+	}
+	
+	public boolean getIsRunning(){
+		return this.isRunning;
 	}
 	
 	/**
@@ -138,9 +144,7 @@ public class Server {
 		}
 	}
 	
-	public static void main(String[] args){
-		Server S = new Server();
-	}
+	
 	
 } 
 

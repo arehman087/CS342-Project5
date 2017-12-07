@@ -213,21 +213,15 @@ public class RSAKey {
 	public long getN() {
 		return this.n;
 	}
-
-	/**
-	 * Returns the p value.
-	 * @return The p value.
-	 */
+	
 	public long getP() {
+		// TODO Auto-generated method stub
 		return this.p;
 	}
 	
-	/**
-	 * Returns the q value.
-	 * @return The q value.
-	 */
 	public long getQ() {
-		return this.q;
+		// TODO Auto-generated method stub
+		return this.p;
 	}
 	
 	/**
@@ -330,4 +324,6 @@ public class RSAKey {
 		
 		return primes;
 	}
+
+	
 }

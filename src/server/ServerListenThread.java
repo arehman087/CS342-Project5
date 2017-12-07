@@ -20,12 +20,11 @@ public class ServerListenThread implements Runnable {
 	 */
 	@Override
 	public void run() {
-		while (true) {
+		while (this.server.getIsRunning()) {
 			try {
 				Socket client = this.server.getSocket().accept();
 				this.server.addConnection(client);
 			} catch (IOException e) {
-				e.printStackTrace();
 				continue;
 			}
 		}
