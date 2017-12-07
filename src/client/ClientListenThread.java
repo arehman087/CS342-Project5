@@ -25,11 +25,12 @@ public class ClientListenThread implements Runnable {
 		try {
 			while (this.client.getIsRunning()) {
 				if (this.client.getIn().ready()) {
-					String messageType = this.client.getIn().readLine();
+					int messageType = 
+							Integer.valueOf(this.client.getIn().readLine());
 					
-					if (messageType.equals(RECV_ON_EXIT)) {
+					if (messageType == RECV_ON_EXIT) {
 						this.client.getMainRef().onServerDisconnect();
-					} else if (messageType.equals(RECV_ON_CLIENT_CONN)) {
+					} else if (messageType == RECV_ON_CLIENT_CONN) {
 						String id = this.client.getIn().readLine();
 						String name = this.client.getIn().readLine();
 						long e = Long.valueOf(this.client.getIn().readLine());
@@ -37,10 +38,15 @@ public class ClientListenThread implements Runnable {
 						
 						this.client.getMainRef().onAddNewConnection(
 								id, name, e, n);
-					} else if (messageType.equals(RECV_ON_CLIENT_DISC)) {
+					} else if (messageType == RECV_ON_CLIENT_DISC) {
 						String id = this.client.getIn().readLine();
 						
 						this.client.getMainRef().onDelOldConnection(id);
+					} else if (messageType == RECV_ON_CLIENT_MSG) {
+						String id = this.client.getIn().readLine();
+						String msg = this.client.getIn().readLine();
+						
+						this.client.getMainRef().onRecieveNewMessage(id, msg);
 					}
 				}
 			}

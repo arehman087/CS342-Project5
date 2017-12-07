@@ -3,6 +3,7 @@ package client;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
 	private Client client;
@@ -21,12 +22,14 @@ public class Main {
 		System.err.println("% Lost Connection With " + id);
 	}
 	
-	public void onSendNewMessage() {
+	public void onSendNewMessage(String id, String msg) {
+		this.client.send(id, msg);
 		
+		System.err.println("% Sent message \"" + msg + "\" to " + id);
 	}
 	
-	public void onRecieveNewMessage() {
-		
+	public void onRecieveNewMessage(String id, String msg) {
+		System.err.println("% Received message \"" + msg + "\" from " + id);
 	}
 	
 	public void onServerDisconnect() {
@@ -37,6 +40,26 @@ public class Main {
 		Main main = new Main();
 		main.client.sendHandshake("ABC", 1234, 5678);
 		main.client.recieveInitialClients(main.clients);
+		
+		// Wait for new messages to be inputed by user
+    	Scanner sC = new Scanner(System.in);
+    	while (true) {
+    		
+    		if (sC.hasNextLine()) {
+	    		String recipient = sC.nextLine();
+	    		if (recipient.equals("EXIT")) {
+	    			break;
+	    		}
+	    		String message = sC.nextLine();
+    		
+	    		main.client.getOut().println(
+	    				main.clients.get(Integer.valueOf(recipient)).getID());
+	    		main.client.getOut().println(message);
+    		}
+    		
+    	}
+    	sC.close();
+		
 		main.client.close();
 	}
 }

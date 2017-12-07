@@ -137,6 +137,16 @@ public class Client {
 	}
 	
 	/**
+	 * Sends the specified message to the specified ID.
+	 * @param id The ID of the client.
+	 * @param msg The message.
+	 */
+	public void send(String id, String msg) {
+		this.out.println(id);
+		this.out.println(msg);
+	}
+	
+	/**
 	 * Starts the listening thread.
 	 */
 	public void startListenThread() {
