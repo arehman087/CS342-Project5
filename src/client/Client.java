@@ -117,9 +117,12 @@ public class Client {
 			
 			System.err.println("% Initial Client Connected: " +
 					"ID: " + id + "; Name:" + name + 
-					"; Key E: " + kE + "; Key N: " + kN);
+					"; Key E: " + kE + "; Key N: " + kN + ", at index " +
+					clients.size());
 			
-			ClientInfo client = new ClientInfo(id, name, kE, kN);
+			ClientInfo client = new ClientInfo(
+					id, name,
+					Long.valueOf(kE), Long.valueOf(kN));
 			clients.add(client);
 		}
 

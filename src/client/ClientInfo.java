@@ -3,8 +3,8 @@ package client;
 public class ClientInfo {
 	private String clientID;
 	private String clientName;
-	private String clientKeyE;
-	private String clientKeyN;
+	private long clientKeyE;
+	private long clientKeyN;
 	
 	/**
 	 * 
@@ -13,7 +13,7 @@ public class ClientInfo {
 	 * @param keyE - takes in the public key e
 	 * @param keyN - takes in the public key n
 	 */
-	public ClientInfo(String ID, String name, String keyE, String keyN) {
+	public ClientInfo(String ID, String name, long keyE, long keyN) {
 		this.clientID = ID;
 		this.clientName = name;
 		this.clientKeyE = keyE;
@@ -41,7 +41,7 @@ public class ClientInfo {
 	 * @return - the clients key e
 	 */
 	public long getKeyE(){
-		return Long.valueOf(this.clientKeyE);
+		return this.clientKeyE;
 	}
 	
 	/**
@@ -49,6 +49,6 @@ public class ClientInfo {
 	 * @return - the clients key e
 	 */
 	public long getKeyN(){
-		return Long.valueOf(this.clientKeyN);
+		return this.clientKeyN;
 	}
 }

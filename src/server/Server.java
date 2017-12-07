@@ -72,7 +72,7 @@ public class Server {
 			// Notify the client of all of the currently connected clients
 			out.println(this.clients.values().size());
 			for (Client c : this.clients.values()) {
-				out.println(sock.toString());
+				out.println(c.getSocket().toString());
 				out.println(c.getName());
 				out.println(c.getKeyE());
 				out.println(c.getKeyN());

@@ -27,6 +27,7 @@ public class ClientListenThread implements Runnable {
 				if (this.client.getIn().ready()) {
 					int messageType = 
 							Integer.valueOf(this.client.getIn().readLine());
+					System.out.println(messageType);
 					
 					if (messageType == RECV_ON_EXIT) {
 						this.client.getMainRef().onServerDisconnect();

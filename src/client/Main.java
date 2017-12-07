@@ -15,11 +15,21 @@ public class Main {
 	}
 	
 	public void onAddNewConnection(String id, String name, long kE, long kN) {
-		System.err.println("% New Connection From " + id);
+		System.err.println("% New Connection From " + id + " at index " +
+				this.clients.size());
+		
+		this.clients.add(new ClientInfo(id, name, kE, kN));
 	}
 	
 	public void onDelOldConnection(String id) {
 		System.err.println("% Lost Connection With " + id);
+		
+		for (int i = 0; i < this.clients.size(); ++i) {
+			if (this.clients.get(i).getID().equals(id)) {
+				this.clients.remove(i);
+				return;
+			}
+		}
 	}
 	
 	public void onSendNewMessage(String id, String msg) {
@@ -40,6 +50,8 @@ public class Main {
 		Main main = new Main();
 		main.client.sendHandshake("ABC", 1234, 5678);
 		main.client.recieveInitialClients(main.clients);
+		main.client.setIsRunning(true);
+		main.client.startListenThread();
 		
 		// Wait for new messages to be inputed by user
     	Scanner sC = new Scanner(System.in);
