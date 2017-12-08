@@ -15,6 +15,8 @@ public class Server {
 	
 	private ServerSocket server;
 	
+	private SGui gui;
+	
 	private Thread serverListenThread;
 	
 	private HashMap <String, Client> clients;
@@ -23,10 +25,10 @@ public class Server {
 	/**
 	 * Instantiates the server.
 	 */
-	public Server(int port) throws IOException {
+	public Server(SGui gui, int port) throws IOException {
 		clients = new HashMap<String, Client>();
 		this.server = new ServerSocket(port);
-		
+		this.gui = gui;
 		
 		this.isRunning = true;
 		this.serverListenThread = new Thread(new ServerListenThread(this));
@@ -109,6 +111,7 @@ public class Server {
 			out.println("OK");
 			
 			System.err.println("% Received New Connection: " + client);
+			this.gui.addConnection(name);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -135,6 +138,7 @@ public class Server {
 		}
 		
 		System.err.println("% Lost Connection: " + client);
+		this.gui.delConnection(client.getName());
 	}
 	
 	/**

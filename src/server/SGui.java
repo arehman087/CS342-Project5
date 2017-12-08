@@ -27,6 +27,7 @@ public class SGui {
 	private SMenu menu;
 	
 	private JList<String> clients;
+	private DefaultListModel<String> model;
 	private boolean isRunning;
 	
 	private Server server;
@@ -91,14 +92,11 @@ public class SGui {
 		 
 		 
 		 
-		 DefaultListModel<String> model = new DefaultListModel<String>();
+		 this.model = new DefaultListModel<String>();
 		 this.clients = new JList<String>(model);
-		 model.addElement("mas");
-		 model.addElement("bien");
 		 this.clients.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		 this.clients.setLayoutOrientation(JList.VERTICAL);
 		 this.clients.setVisibleRowCount(-1);
-		 
 		 
 		 this.window.setLayout(new BorderLayout());
 		 this.window.add(this.buttonWindow, BorderLayout.NORTH);
@@ -120,7 +118,7 @@ public class SGui {
 					 "Enter the port number",
 					 "");
 			try {
-				this.server = new Server(Integer.valueOf(port));
+				this.server = new Server(this, Integer.valueOf(port));
 				this.portInfo.setText(port);
 				this.start.setEnabled(true);
 				this.start.setText("Stop Listening");
@@ -130,6 +128,22 @@ public class SGui {
 				continue;
 			}
 		}
+	}
+	
+	/**
+	 * Adds connection to connection list.
+	 * @param name Name of connection.
+	 */
+	public void addConnection(String name) {
+		this.model.addElement(name);
+	}
+	
+	/**
+	 * Removes the connection from connection list.
+	 * @param name Name of connection
+	 */
+	public void delConnection(String name) {
+		this.model.removeElement(name);
 	}
 	
 	public static void main(String[] args) throws IOException {
