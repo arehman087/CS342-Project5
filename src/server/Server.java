@@ -111,7 +111,7 @@ public class Server {
 			out.println("OK");
 			
 			System.err.println("% Received New Connection: " + client);
-			this.gui.addConnection(name);
+			this.gui.addConnection(name + " (" + client.getSocket() + ")");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -122,6 +122,7 @@ public class Server {
 	 * @param client The client.
 	 */
 	public void removeConnection(Client client) {
+		String socketName = client.getSocket().toString();
 		this.clients.remove(client.getSocket().toString());
 		
 		// Notify all connected clients of the disconnection
@@ -138,7 +139,7 @@ public class Server {
 		}
 		
 		System.err.println("% Lost Connection: " + client);
-		this.gui.delConnection(client.getName());
+		this.gui.delConnection(client.getName() + " (" + socketName + ")");
 	}
 	
 	/**

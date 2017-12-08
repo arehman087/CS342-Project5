@@ -143,6 +143,7 @@ public class SGui {
 	 * @param name Name of connection
 	 */
 	public void delConnection(String name) {
+		System.out.println(name);
 		this.model.removeElement(name);
 	}
 	

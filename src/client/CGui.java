@@ -140,6 +140,11 @@ public class CGui{
 			this.main.setRSA(RSAKey.generateRSAKey());
 		}
 		
+		String name = JOptionPane.showInputDialog(
+				"Please enter your name",
+				"");
+		this.main.setName(name);
+		
 		this.main.isReady = true;
 	}
 	

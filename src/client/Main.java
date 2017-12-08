@@ -11,6 +11,8 @@ public class Main {
 	private RSAKey rsa;
 	private CGui gui;
 	
+	private String name;
+	
 	protected boolean isReady;
 	
 	public Main() {
@@ -62,6 +64,10 @@ public class Main {
 	public void setClient(Client c) {
 		this.client = c;
 	}
+	
+	public void setName(String n) {
+		this.name = n;
+	}
 
 	public static void main(String args[]) throws IOException {
 		Main main = new Main();
@@ -89,7 +95,7 @@ public class Main {
 		    }
 		}));
 		
-		main.client.sendHandshake("ABC", 1234, 5678);
+		main.client.sendHandshake(main.name, main.rsa.getE(), main.rsa.getN());
 		main.client.recieveInitialClients(main.clients);
 		main.client.setIsRunning(true);
 		main.client.startListenThread();
