@@ -1,6 +1,7 @@
 package client;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -44,9 +45,27 @@ public class Main {
 	}
 	
 	public void onSendNewMessage(String id, String msg) {
-		this.client.send(id, msg);
+		StringBuilder sBEncrypted = new StringBuilder();
 		
-		System.err.println("% Sent message \"" + msg + "\" to " + id);
+		for (int i = 0; i < this.clients.size(); ++i) {
+			ClientInfo c = this.clients.get(i);
+			
+			if (c.getID().equals(id)) {
+				ArrayList<BigInteger> encrypted = RSAKey.encrypt(
+						msg, c.getKeyE(), c.getKeyN());
+				
+				for (BigInteger bI : encrypted) {
+					sBEncrypted.append(bI.toString());
+					sBEncrypted.append(",");
+				}
+				
+				break;
+			}
+		}
+		
+		this.client.send(id, sBEncrypted.toString());
+		System.err.println("% Sent message \"" + sBEncrypted.toString() + "\" (\"" +
+				msg + "\") to " + id);
 	}
 	
 	public void onRecieveNewMessage(String id, String msg) {
@@ -58,9 +77,20 @@ public class Main {
 			}
 		}
 		
-		this.gui.addToChatboxIncoming(name, msg);
+		String[] encryptedStrings = msg.split(",");
+		ArrayList<BigInteger> encrypted = new ArrayList<BigInteger>();
+		for (String s : encryptedStrings) {
+			encrypted.add(new BigInteger(s));
+		}
 		
-		System.err.println("% Received message \"" + msg + "\" from " + id);
+		String decrypted = RSAKey.decrypt(encrypted,
+				this.rsa.getD(),
+				this.rsa.getN());
+		
+		this.gui.addToChatboxIncoming(name, decrypted);
+		
+		System.err.println("% Received message \"" + encrypted + "\" (\"" +
+				decrypted + "\") from " + id);
 	}
 	
 	public void onServerDisconnect() {
