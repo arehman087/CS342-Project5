@@ -31,6 +31,8 @@ public class CGui{
 		this.main = m;
 		this.window = new JFrame("Client");
 		
+		this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 		this.input = new JTextField();
 		this.input.setEditable(true);
 		this.input.addActionListener( 

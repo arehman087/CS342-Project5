@@ -15,14 +15,6 @@ public class Main {
 	
 	public Main() {
 		this.isReady = false;
-		
-		/*
-		this.client = new Client(this, ip, port);
-		this.rsa = rsa;
-		
-		this.clients = new ArrayList<ClientInfo>();
-		this.gui = c;
-		*/
 	}
 	
 	public void onAddNewConnection(String id, String name, long kE, long kN) {
@@ -85,34 +77,21 @@ public class Main {
 		System.err.println("% RSA Created " + main.rsa.getP() +
 				", " + main.rsa.getQ());
 		
-		try {
-			main.client.sendHandshake("ABC", 1234, 5678);
-			main.client.recieveInitialClients(main.clients);
-			main.client.setIsRunning(true);
-			main.client.startListenThread();
-		} finally {
-			main.client.close();
-		}
-//		
-//		// Wait for new messages to be inputed by user
-//    	Scanner sC = new Scanner(System.in);
-//    	while (true) {
-//    		
-//    		if (sC.hasNextLine()) {
-//	    		String recipient = sC.nextLine();
-//	    		if (recipient.equals("EXIT")) {
-//	    			break;
-//	    		}
-//	    		String message = sC.nextLine();
-//    		
-//	    		main.client.getOut().println(
-//	    				main.clients.get(Integer.valueOf(recipient)).getID());
-//	    		main.client.getOut().println(message);
-//    		}
-//    		
-//    	}
-//    	sC.close();
-//		
-//		main.client.close();
+		// On exit, disconnect from server
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+		    public void run() {
+		        try {
+					main.client.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+		}));
+		
+		main.client.sendHandshake("ABC", 1234, 5678);
+		main.client.recieveInitialClients(main.clients);
+		main.client.setIsRunning(true);
+		main.client.startListenThread();
 	}
 }

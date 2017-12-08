@@ -34,6 +34,22 @@ public class Server {
 	}
 	
 	/**
+	 * Closes the server.
+	 * @throws IOException 
+	 */
+	public void close() throws IOException {
+		// Notify all connected clients of close
+		for (Client c : this.clients.values()) {
+			PrintWriter outC = new PrintWriter(
+					c.getSocket().getOutputStream(), true);
+			
+			outC.println(SEND_ON_EXIT);
+		}
+		
+		System.err.println("% Closed Server");
+	}
+	
+	/**
 	 * Gets the server socket.
 	 * @return The socket.
 	 */

@@ -44,22 +44,27 @@ public class SGui {
 		this.start.addActionListener(
 				new ActionListener(){
 					public void actionPerformed(ActionEvent e){
-						//TODO begin connection to the server-client here
-						
-						SGui.this.start.setEnabled(false);
-						
-						SGui.this.start.setText("Start Listening");
-						try {
-							SGui.this.server.setIsRunning(false);
+						if (!SGui.this.isRunning) {
+							SGui.this.start.setEnabled(false);
 							
-							SGui.this.server.getSocket().close();
-							
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							SGui.this.start.setText("Start Listening");
+							try {
+								SGui.this.server.setIsRunning(false);
+								
+								SGui.this.server.getSocket().close();
+								
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						} else {
+							try {
+								SGui.this.server.close();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 						}
-						
-							
 					}
 				});
 		
@@ -119,6 +124,7 @@ public class SGui {
 				this.portInfo.setText(port);
 				this.start.setEnabled(true);
 				this.start.setText("Stop Listening");
+				this.isRunning = true;
 				break;
 			} catch (Exception e) {
 				continue;
@@ -128,5 +134,17 @@ public class SGui {
 	
 	public static void main(String[] args) throws IOException {
 		SGui sg = new SGui();
+		
+		// On exit, disconnect from server
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+		    public void run() {
+		        try {
+					sg.server.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    }
+		}));
 	}
 }
