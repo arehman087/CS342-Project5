@@ -17,14 +17,16 @@ public class Main {
 	
 	public Main() {
 		this.isReady = false;
+		this.clients = new ArrayList<ClientInfo>();
 	}
 	
-	public void onAddNewConnection(String id, String name, long kE, long kN) {
-		System.err.println("% New Connection From " + id + " at index " +
-				this.clients.size());
+	public void onAddNewConnection(String id, String n, long kE, long kN) {
+		System.err.println("% New Client Connected: " +
+				"ID: " + id + "; Name:" + n + 
+				"; Key E: " + kE + "; Key N: " + kN);
 		
-		this.clients.add(new ClientInfo(id, name, kE, kN));
-		this.gui.addCList(name);
+		this.clients.add(new ClientInfo(id, n, kE, kN));
+		this.gui.addCList(n + " (" + id + ")");
 	}
 	
 	public void onDelOldConnection(String id) {
@@ -32,8 +34,10 @@ public class Main {
 		
 		for (int i = 0; i < this.clients.size(); ++i) {
 			if (this.clients.get(i).getID().equals(id)) {
+				String n = this.clients.get(i).getName();
+				
 				this.clients.remove(i);
-				this.gui.delList(i);
+				this.gui.delList(n + " (" + id + ")");
 				return;
 			}
 		}
@@ -72,6 +76,7 @@ public class Main {
 	public static void main(String args[]) throws IOException {
 		Main main = new Main();
 		CGui c = new CGui(main);
+		main.gui = c;
 
 		// Wait for user to enter their preferences
 		while (!main.isReady) {
@@ -96,7 +101,7 @@ public class Main {
 		}));
 		
 		main.client.sendHandshake(main.name, main.rsa.getE(), main.rsa.getN());
-		main.client.recieveInitialClients(main.clients);
+		main.client.recieveInitialClients();
 		main.client.setIsRunning(true);
 		main.client.startListenThread();
 	}

@@ -109,11 +109,10 @@ public class Client {
 	/**
 	 * Receives the initial clients from the server. This should be called
 	 * right after the handshake is complete.
-	 * @param clients The list of clients to be populated with the clients.
 	 * @throws IOException On a server connection error.
 	 * @throws NumberFormatException On a failed server message conversion. 
 	 */
-	public void recieveInitialClients(ArrayList<ClientInfo> clients)
+	public void recieveInitialClients()
 			throws NumberFormatException, IOException {
 		int numConnections = Integer.valueOf(this.in.readLine());
 		
@@ -123,15 +122,8 @@ public class Client {
 			String kE = this.in.readLine();
 			String kN = this.in.readLine();
 			
-			System.err.println("% Initial Client Connected: " +
-					"ID: " + id + "; Name:" + name + 
-					"; Key E: " + kE + "; Key N: " + kN + ", at index " +
-					clients.size());
-			
-			ClientInfo client = new ClientInfo(
-					id, name,
+			this.mainRef.onAddNewConnection(id, name,
 					Long.valueOf(kE), Long.valueOf(kN));
-			clients.add(client);
 		}
 
 		System.out.println("% Initial Connections Made: " + numConnections);

@@ -152,7 +152,7 @@ public class CGui{
 		this.model.addElement(a);
 	}
 	
-	public void delList(int i){
-		this.model.remove(i);
+	public void delList(String a){
+		this.model.removeElement(a);
 	}
 }

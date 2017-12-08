@@ -88,9 +88,9 @@ public class Server {
 				
 				outC.println(SEND_ON_CLIENT_CONN);
 				outC.println(sock.toString());
-				outC.println(c.getName());
-				outC.println(c.getKeyE());
-				outC.println(c.getKeyN());
+				outC.println(name);
+				outC.println(kE);
+				outC.println(kN);
 			}
 			
 			// Notify the client of all of the currently connected clients

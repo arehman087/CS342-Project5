@@ -16,8 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RSAKey {
 	protected static int BLOCKING_SIZE = 4;
 	protected static File PRIMES_FILE = new File("res/primes");
-	protected static ArrayList<Integer> PRIMES = 
-			RSAKey.getRandomPrimes(PRIMES_FILE);
+	protected static ArrayList<Integer> PRIMES = new ArrayList<Integer>(); 
+			// RSAKey.getRandomPrimes(PRIMES_FILE);
 	
 	private long d;
 	private long e;
