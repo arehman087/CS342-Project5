@@ -136,7 +136,6 @@ public class SGui {
 		 
 		 this.window.setSize(dim.width/2,dim.height/2);
 		 this.window.setVisible(true);
-		
 	}
 	
 	public static void main(String[] args) throws IOException {

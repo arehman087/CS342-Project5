@@ -9,11 +9,20 @@ public class Main {
 	private Client client;
 	private ArrayList<ClientInfo> clients;
 	private RSAKey rsa;
-	private CGui c;
-	public Main(CGui c, String s, int p) throws UnknownHostException, IOException {
-		this.client = new Client(this, s, p);
+	private CGui gui;
+	
+	protected boolean isReady;
+	
+	public Main() {
+		this.isReady = false;
+		
+		/*
+		this.client = new Client(this, ip, port);
+		this.rsa = rsa;
+		
 		this.clients = new ArrayList<ClientInfo>();
-		this.c = c;
+		this.gui = c;
+		*/
 	}
 	
 	public void onAddNewConnection(String id, String name, long kE, long kN) {
@@ -21,7 +30,7 @@ public class Main {
 				this.clients.size());
 		
 		this.clients.add(new ClientInfo(id, name, kE, kN));
-		this.c.addCList(name);
+		this.gui.addCList(name);
 	}
 	
 	public void onDelOldConnection(String id) {
@@ -30,7 +39,7 @@ public class Main {
 		for (int i = 0; i < this.clients.size(); ++i) {
 			if (this.clients.get(i).getID().equals(id)) {
 				this.clients.remove(i);
-				this.c.delList(i);
+				this.gui.delList(i);
 				return;
 			}
 		}
@@ -58,9 +67,23 @@ public class Main {
 		this.rsa = r;
 	}
 	
+	public void setClient(Client c) {
+		this.client = c;
+	}
+
 	public static void main(String args[]) throws IOException {
+		Main main = new Main();
+		CGui c = new CGui(main);
+
+		// Wait for user to enter their preferences
+		while (!main.isReady) {
+			
+		}
 		
-		CGui c = new CGui();
+		System.err.println("% Client Created " + main.client.getIP() +
+				":" + main.client.getPort());
+		System.err.println("% RSA Created " + main.rsa.getP() +
+				", " + main.rsa.getQ());
 		
 //		Main main = new Main("localHost", 1000);
 //		main.client.sendHandshake("ABC", 1234, 5678);

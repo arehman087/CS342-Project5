@@ -21,6 +21,14 @@ public class Client {
 	
 	private boolean isRunning;
 	
+	public String getIP() {
+		return this.ip;
+	}
+	
+	public int getPort() {
+		return this.port;
+	}
+	
 	/**
 	 * Instantiates a new Client.
 	 * @param main The main reference.

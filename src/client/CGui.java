@@ -22,29 +22,17 @@ public class CGui{
 	private JList<String> clients;
 	private CMenu menu;
 	
-	private JTextField rsaVals;
-	private boolean choose;
-	
 	Main main;
-	
-	JButton yes;
-	JButton no;
-	
-	private boolean chooseIP;
-	private boolean chooseName;
 	
 	private DefaultListModel<String> model;
 	
 
-	public CGui() {
-		
-		
-		this.chooseIP = false;
-		this.chooseName = false;
+	public CGui(Main m) {
+		this.main = m;
 		this.window = new JFrame("Client");
 		
 		this.input = new JTextField();
-		this.input.setEditable(false);
+		this.input.setEditable(true);
 		this.input.addActionListener( 
 				new ActionListener(){
 					public void actionPerformed(ActionEvent e){
@@ -58,29 +46,6 @@ public class CGui{
 						CGui.this.input.setText("");
 					}
 				} );
-		
-		this.yes = new JButton("YES");
-		this.yes.addActionListener( 
-				new ActionListener(){
-					public void actionPerformed(ActionEvent e){
-						CGui.this.rsaVals.setEditable(true);
-						CGui.this.yes.setEnabled(false);
-						CGui.this.no.setEnabled(false);
-					}
-				});
-		
-		this.no = new JButton("NO");
-		this.no.addActionListener( 
-				new ActionListener(){
-					public void actionPerformed(ActionEvent e){
-						CGui.this.main.setRSA(RSAKey.generateRSAKey());
-						CGui.this.yes.setEnabled(false);
-						CGui.this.no.setEnabled(false);
-						CGui.this.rsaVals.setEditable(true);
-						System.out.println("P AND Q " + CGui.this.main.getRSA().getP() +" "+ CGui.this.main.getRSA().getQ());
-
-					}
-				});
 		
 		this.model = new DefaultListModel<String>();
 		
@@ -101,94 +66,10 @@ public class CGui{
 		this.clients.setLayoutOrientation(JList.VERTICAL);
 		this.clients.setVisibleRowCount(-1);
 		
-		this.choose = false;
-		
-		this.yes.setEnabled(false);
-		this.no.setEnabled(false);
-		//get all info needed
-		this.rsaVals = new JTextField();
-		this.rsaVals.setEditable(true);
-		this.rsaVals.addActionListener( 
-				new ActionListener(){
-					public void actionPerformed(ActionEvent e){
-						
-						if (!CGui.this.chooseIP){
-							
-							//connect then store ip and port
-							
-							
-							//TODO
-							String ipp = e.getActionCommand().toString();
-							String[] ipPort = ipp.split(" ");
-							if (ipPort.length!=2){
-								CGui.this.chat.append("Please enter the IP and the Port seperated by a space.\n");
-								return;
-							}
-							try{
-								CGui.this.main = new Main(CGui.this,ipPort[0], Integer.valueOf(ipPort[1]));
-							} catch(Exception x){
-								CGui.this.chat.append("Please enter the IP and the Port seperated by a space.\n");
-								return;								
-							}
-							
-							CGui.this.chooseIP = true;
-							CGui.this.rsaVals.setText("");
-							CGui.this.yes.setEnabled(true);
-							CGui.this.no.setEnabled(true);
-							
-							
-							
-							CGui.this.chat.append("Client is connected\n");
-							CGui.this.chat.append("please enter a name");
-							return;
-						}
-						
-						
-											
-						
-						
-						CGui.this.chat.append("please enter two Prime numbers with a space in between\n");
-						
-						
-						String num = e.getActionCommand().toString();
-						String[] nums = num.split(" ");
-						if (nums.length!=2){
-							
-							return;
-						}
-						try{
-							
-							CGui.this.main.setRSA( RSAKey.generateRSAKey(Long.parseLong(nums[0]), Long.parseLong(nums[1])));
-							CGui.this.choose = true;
-						} catch(IllegalArgumentException i){
-							CGui.this.rsaVals.setText("");	
-							CGui.this.choose = false;
-						}
-						if (!choose){
-							CGui.this.chat.append("Please try again \n");
-
-							return;
-						}
-						else{
-							CGui.this.choose = false;
-							CGui.this.yes.setEnabled(false);
-							CGui.this.no.setEnabled(false);
-							CGui.this.input.setEditable(true);
-							CGui.this.rsaVals.setEditable(false);
-							CGui.this.chat.append("P AND Q " + CGui.this.main.getRSA().getP() +" "+ CGui.this.main.getRSA().getQ());
-							CGui.this.rsaVals.setText("");	
-						}
-						
-					}
-				} );
-		
 		this.buttonWindow = new JPanel();
 		JPanel buttonsAndTxtbox = new JPanel();
 		buttonsAndTxtbox.setLayout(new FlowLayout());
 		this.buttonWindow.setLayout(new BorderLayout());
-		this.buttonWindow.add(this.yes, BorderLayout.WEST);
-		this.buttonWindow.add(this.no, BorderLayout.EAST);
-		this.buttonWindow.add(this.rsaVals, BorderLayout.SOUTH);
 		
 		buttonsAndTxtbox.add(this.buttonWindow);
 		this.buttonWindow.add(this.input);
@@ -217,6 +98,43 @@ public class CGui{
 		Dimension dim = toolkit.getScreenSize();
 		this.window.setSize(dim.width/2,dim.height/2);//here frame is your container 
 		this.window.setVisible(true);
+		
+		while (true) {
+			String address = JOptionPane.showInputDialog(this, 
+					 "Enter the IP address and port, separated by a space");
+			try {
+				String[] addressSplit = address.split("\\s+");
+
+				Client client = new Client(this.main,
+						addressSplit[0], Integer.valueOf(addressSplit[1]));
+				this.main.setClient(client);
+				
+				break;
+			} catch (Exception e) {
+				continue;
+			}
+		}
+		
+		int useCustom = JOptionPane.showConfirmDialog(null, "Use custom P & Q values?");
+		if (useCustom == JOptionPane.YES_OPTION) {
+			while (true) {
+				String values = JOptionPane.showInputDialog(this, 
+						 "Enter the p and q values, separated by a space");
+				try {
+					String[] valuesSplit = values.split("\\s+");
+				
+					RSAKey rsa = RSAKey.generateRSAKey(Long.valueOf(valuesSplit[0]), 
+							Long.valueOf(valuesSplit[1]));
+					break;
+				} catch (Exception e) {
+					continue;
+				}
+			}
+		} else {
+			this.main.setRSA(RSAKey.generateRSAKey());
+		}
+		
+		this.main.isReady = true;
 	}
 	
 	public void addCList(String a){
