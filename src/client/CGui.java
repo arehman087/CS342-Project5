@@ -100,8 +100,9 @@ public class CGui{
 		this.window.setVisible(true);
 		
 		while (true) {
-			String address = JOptionPane.showInputDialog(this, 
-					 "Enter the IP address and port, separated by a space");
+			String address = JOptionPane.showInputDialog(
+					 "Enter the IP address and port, separated by a space",
+					 "");
 			try {
 				String[] addressSplit = address.split("\\s+");
 
@@ -118,13 +119,16 @@ public class CGui{
 		int useCustom = JOptionPane.showConfirmDialog(null, "Use custom P & Q values?");
 		if (useCustom == JOptionPane.YES_OPTION) {
 			while (true) {
-				String values = JOptionPane.showInputDialog(this, 
-						 "Enter the p and q values, separated by a space");
+				String values = JOptionPane.showInputDialog( 
+						 "Enter the p and q values, separated by a space",
+						 "");
 				try {
 					String[] valuesSplit = values.split("\\s+");
 				
 					RSAKey rsa = RSAKey.generateRSAKey(Long.valueOf(valuesSplit[0]), 
 							Long.valueOf(valuesSplit[1]));
+					this.main.setRSA(rsa);
+					
 					break;
 				} catch (Exception e) {
 					continue;

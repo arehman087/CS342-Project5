@@ -14,14 +14,14 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import client.Client;
+
 public class SGui {
 	
 	private JFrame window;	
 	private JPanel buttonWindow;
 	private JLabel machineInfo;
 	private JLabel portInfo;
-	
-	private JTextField portnum;
 	
 	private JButton start;
 	private SMenu menu;
@@ -33,11 +33,9 @@ public class SGui {
 	
 	
 	public SGui() {
-		
-		
-		
 		this.isRunning = false;
 		this.window = new JFrame("Server");
+		this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		this.buttonWindow = new JPanel();
 		this.buttonWindow.setLayout(new FlowLayout());
@@ -67,31 +65,7 @@ public class SGui {
 		
 		this.buttonWindow.add(this.start);
 		this.start.setEnabled(false);
-		this.portnum = new JTextField();
-		this.portnum.addActionListener(
-				new ActionListener(){
-					public void actionPerformed(ActionEvent e){
-						//TODO
-						String port = e.getActionCommand().toString();
-						int num = Integer.valueOf(port);
-						try{
-							SGui.this.server = new Server(num);
-						} catch (IOException i){
-							SGui.this.portInfo.setText("TRY AGAIN");
-							return;
-						}
-						
-						//test port
-						
-						SGui.this.portInfo.setText(port);
-						SGui.this.start.setEnabled(true);
-						SGui.this.portnum.setEditable(false);
-						SGui.this.start.setText("Stop Listening");
-						
-						
-					}
-				});
-		
+
 		//get and displa the info for the server.
 		String serverAddress = null;
 		
@@ -124,7 +98,6 @@ public class SGui {
 		 this.window.setLayout(new BorderLayout());
 		 this.window.add(this.buttonWindow, BorderLayout.NORTH);
 		 this.window.add(new JScrollPane(this.clients), BorderLayout.CENTER);
-		 this.window.add(this.portnum, BorderLayout.SOUTH);
 		
 		 this.menu = new SMenu();
 		 JMenuBar bar = new JMenuBar();
@@ -136,10 +109,24 @@ public class SGui {
 		 
 		 this.window.setSize(dim.width/2,dim.height/2);
 		 this.window.setVisible(true);
+		 
+		 while (true) {
+			String port = JOptionPane.showInputDialog(
+					 "Enter the port number",
+					 "");
+			try {
+				this.server = new Server(Integer.valueOf(port));
+				this.portInfo.setText(port);
+				this.start.setEnabled(true);
+				this.start.setText("Stop Listening");
+				break;
+			} catch (Exception e) {
+				continue;
+			}
+		}
 	}
 	
 	public static void main(String[] args) throws IOException {
 		SGui sg = new SGui();
-    	
 	}
 }
