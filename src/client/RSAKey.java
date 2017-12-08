@@ -16,8 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RSAKey {
 	protected static int BLOCKING_SIZE = 4;
 	protected static File PRIMES_FILE = new File("res/primes");
-	protected static ArrayList<Integer> PRIMES = new ArrayList<Integer>(); 
-			// RSAKey.getRandomPrimes(PRIMES_FILE);
+	protected static ArrayList<Integer> PRIMES = 
+			RSAKey.getRandomPrimes(PRIMES_FILE);
 	
 	private long d;
 	private long e;
@@ -45,8 +45,13 @@ public class RSAKey {
 	public static RSAKey generateRSAKey() {
 		Random r = new Random();
 		
-		long p = RSAKey.PRIMES.get(r.nextInt(PRIMES.size()));
-		long q = RSAKey.PRIMES.get(r.nextInt(PRIMES.size()));
+		int firstIndex = r.nextInt(PRIMES.size());
+		int secondIndex = firstIndex;
+		while (firstIndex == secondIndex) {
+			secondIndex = r.nextInt(PRIMES.size());
+		}
+		long p = RSAKey.PRIMES.get(firstIndex);
+		long q = RSAKey.PRIMES.get(secondIndex);
 		
 		return generateRSAKey(p, q);
 	}
@@ -64,6 +69,11 @@ public class RSAKey {
 		// Set p and q of the instance
 		key.p = p;
 		key.q = q;
+		
+		// Check p != q
+		if (p == q) {
+			throw new IllegalArgumentException("p cannot equal q");
+		}
 		
 		// Check p and q are both prime, throw exception if not prime
 		if (!isPrime(key.p)) {

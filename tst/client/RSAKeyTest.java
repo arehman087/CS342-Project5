@@ -60,8 +60,8 @@ public class RSAKeyTest {
 	 */
 	@Test
 	public void testEncryptDecrypt() {
-		long p = 17033;
-		long q = 17029;
+		long p = 20261;
+		long q = 20287;
 		RSAKey rsa = RSAKey.generateRSAKey(p, q);
 		
 		String original = "Meet me outside SCE at 10pm...";

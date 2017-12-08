@@ -73,7 +73,6 @@ public class CGui{
 		
 		this.chat = new JTextArea();
 		this.chat.setEditable(false);
-		this.chat.append("Please enter the IP and the Port seperated by a space.\n");
 		
 		this.menu = new CMenu();
 		JMenuBar bar = new JMenuBar();
