@@ -85,11 +85,14 @@ public class Main {
 		System.err.println("% RSA Created " + main.rsa.getP() +
 				", " + main.rsa.getQ());
 		
-//		Main main = new Main("localHost", 1000);
-//		main.client.sendHandshake("ABC", 1234, 5678);
-//		main.client.recieveInitialClients(main.clients);
-//		main.client.setIsRunning(true);
-//		main.client.startListenThread();
+		try {
+			main.client.sendHandshake("ABC", 1234, 5678);
+			main.client.recieveInitialClients(main.clients);
+			main.client.setIsRunning(true);
+			main.client.startListenThread();
+		} finally {
+			main.client.close();
+		}
 //		
 //		// Wait for new messages to be inputed by user
 //    	Scanner sC = new Scanner(System.in);
