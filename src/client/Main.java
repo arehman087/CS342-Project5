@@ -50,6 +50,16 @@ public class Main {
 	}
 	
 	public void onRecieveNewMessage(String id, String msg) {
+		String name = "";
+		for (int i = 0; i < this.clients.size(); ++i) {
+			if (this.clients.get(i).getID().equals(id)) {
+				name = this.clients.get(i).getName();
+				break;
+			}
+		}
+		
+		this.gui.addToChatboxIncoming(name, msg);
+		
 		System.err.println("% Received message \"" + msg + "\" from " + id);
 	}
 	
@@ -59,6 +69,10 @@ public class Main {
 	
 	public RSAKey getRSA(){
 		return this.rsa;
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 	
 	public void setRSA(RSAKey r){

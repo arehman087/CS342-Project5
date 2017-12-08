@@ -26,6 +26,7 @@ public class CGui{
 	
 	private DefaultListModel<String> model;
 	
+	private String selectedClient;
 
 	public CGui(Main m) {
 		this.main = m;
@@ -38,14 +39,12 @@ public class CGui{
 		this.input.addActionListener( 
 				new ActionListener(){
 					public void actionPerformed(ActionEvent e){
-						//onmessage
-						
-						if (e.getActionCommand().equals("")){
+						if (e.getActionCommand().equals("") ||
+								selectedClient == null){
 							return;
+						} else {
+							CGui.this.addToChatboxOutgoing(selectedClient, e.getActionCommand());
 						}
-						CGui.this.chat.append(e.getActionCommand());
-						CGui.this.chat.append("\n");
-						CGui.this.input.setText("");
 					}
 				} );
 		
@@ -56,13 +55,8 @@ public class CGui{
 		this.clients.addListSelectionListener( 
 				new ListSelectionListener(){
 					public void valueChanged(ListSelectionEvent e) {
-						if (!e.getValueIsAdjusting()) {
-							//add the stuff for the list box
-							CGui.this.chat.append("HELLO\n");
-							System.out.println("hello");
-					    }
+						selectedClient = CGui.this.clients.getSelectedValue();
 					}
-					
 				});
 		this.clients.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
 		this.clients.setLayoutOrientation(JList.VERTICAL);
@@ -146,6 +140,26 @@ public class CGui{
 		this.main.setName(name);
 		
 		this.main.isReady = true;
+	}
+	
+	public void addToChatboxOutgoing(String recp, String msg) {
+		int idStart = selectedClient.indexOf('(');
+		int idEnd = selectedClient.indexOf(')');
+		String clientName = selectedClient.substring(0, idStart - 1);
+		String clientID = selectedClient.substring(idStart + 1, idEnd);
+		
+		this.chat.append(CGui.this.main.getName() + 
+				" (for " + clientName + "): ");
+		this.chat.append(msg);
+		this.chat.append("\n");
+		this.input.setText("");
+		
+		this.main.onSendNewMessage(clientID, msg);
+	}
+	
+	public void addToChatboxIncoming(String sender, String msg) {
+		this.chat.append(sender + ": " + msg);
+		this.chat.append("\n");
 	}
 	
 	public void addCList(String a){
